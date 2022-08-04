@@ -51,7 +51,6 @@ def parse_pcap(file: str = PCAP_FILE) -> tuple:
         sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
         sys.exit()
 
-
     return (ts_list, buffer_list)
 
 
@@ -79,7 +78,7 @@ def tabulate_data(pcap_data: tuple) -> None:
     """ Extract necessary data and tabulate the network data
     """
 
-    packet_type_dict = {}
+    packet_type_dict: dict = {}
     timestamp, buffer = pcap_data
     print("[*] Tabulating the data from PCAP file.\n")
     for i, buf in enumerate(buffer):
@@ -113,7 +112,7 @@ def tabulate_data(pcap_data: tuple) -> None:
             sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
             sys.exit()
 
-    tmp_list = []
+    tmp_list: list = []
     tmp_append = tmp_list.append
     for key, value in packet_type_dict.items():
         tmp_append([key,

@@ -58,7 +58,7 @@ def extract_traffics(eth_list: list) -> dict:
     Return them as a dictionary
     """
 
-    traffics_dict = {}
+    traffics_dict: dict = {}
     print("[*] Extracting traffics data.\n")
     for eth in eth_list:
         src = socket.inet_ntoa(eth.data.src)
@@ -70,7 +70,7 @@ def extract_traffics(eth_list: list) -> dict:
             traffics_dict.setdefault(tmp_key, 1)
 
     # sorting the traffics_dict according to number of traffic
-    tmp_dict = {}
+    tmp_dict: dict = {}
     for key, value in traffics_dict.items():
         tmp_dict.setdefault(value, []).append(key)
 

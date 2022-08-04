@@ -22,7 +22,7 @@ def extract_data(pcap_data: tuple) -> dict:
     ts_list, _ = pcap_data
     start_time = ts_list[0]
     interval = 5
-    data = {}
+    data: dict = {}
     # time_interval = f"{start_time} -> {start_time+interval}"
     time_interval = start_time
     print("[*] Extracting data to create a line chart.\n")
