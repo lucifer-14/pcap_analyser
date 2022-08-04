@@ -117,10 +117,10 @@ def tabulate_data(pcap_data: tuple) -> None:
     tmp_append = tmp_list.append
     for key, value in packet_type_dict.items():
         tmp_append([key,
-                        value['packets'],
-                        value['first_timestamp'],
-                        value['last_timestamp'],
-                        value['total_packet_length']/value['packets']])
+                    value['packets'],
+                    value['first_timestamp'],
+                    value['last_timestamp'],
+                    value['total_packet_length']/value['packets']])
 
     print(tabulate(tmp_list,
                    headers=['Packet Type',

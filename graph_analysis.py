@@ -62,7 +62,6 @@ def draw_graph(pcap_data: tuple) -> None:
     plt.xlabel('Time Interval (UTC)')
     plt.ylabel('Number of Packets')
     # plt.gcf().canvas.set_window_title('Number of Packets Line Chart')
-    
 
     print("[+] Successfully drawn a line chart.\n")
     plt.savefig('number_of_packets_line_chart')
