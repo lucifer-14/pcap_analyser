@@ -14,6 +14,8 @@ import matplotlib.dates as mdt
 import parse_pcap as p_pcap
 
 
+INTERVAL = 5
+
 def extract_data(pcap_data: tuple) -> dict:
     """ Extract time intervals and packet counts between each time interval.
         Return dictionary of time_intervals(key) and packet counts(value)
@@ -21,16 +23,15 @@ def extract_data(pcap_data: tuple) -> dict:
 
     ts_list, _ = pcap_data
     start_time = ts_list[0]
-    interval = 5
     data: dict = {}
     # time_interval = f"{start_time} -> {start_time+interval}"
     time_interval = start_time
     print("[*] Extracting data to create a line chart.\n")
     for timestamp in ts_list:
-        if timestamp > start_time+interval:
-            start_time += interval
+        if timestamp > start_time + INTERVAL:
+            start_time += INTERVAL
             # time_interval = f"{start_time} -> {start_time+interval}"
-            time_interval = start_time+interval
+            time_interval = start_time + INTERVAL
         if time_interval in data:
             data[time_interval] += 1
         else:
@@ -53,7 +54,7 @@ def draw_graph(pcap_data: tuple) -> None:
 
     plt.plot(x_dates, y_values)
     plt.format_xdata = mdt.DateFormatter("%M:%S")
-    threshold = stats.mean(y_values) + (2*stats.stdev(y_values))
+    threshold = stats.mean(y_values) + (2 * stats.stdev(y_values))
 
     plt.axhline(y=threshold, linestyle='--', color="r")
     plt.gcf().autofmt_xdate()
