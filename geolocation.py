@@ -117,4 +117,3 @@ def create_kml_file(traffics_dict: dict) -> None:
 
 if __name__ == "__main__":
     create_kml_file(ap.extract_traffics(p_pcap.parse_ethernet(p_pcap.parse_pcap(p_pcap.PCAP_FILE))))
-l
