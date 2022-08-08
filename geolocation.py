@@ -18,39 +18,26 @@ import analyse_packets as ap
 GEOLOCATION_DB = 'GeoLite2-City_20190129.mmdb'
 
 
-def get_dst_ip(traffics_dict: dict) -> dict:
-    """ Return the dict of destination IP addresses
-    and their packets counts from IP address dictionary"""
-
-    print("[*] Extracting destination IP addresses from traffics.\n")
-    dst_ip_dict = {}    # stores a dict of dst_ip(key) and packet counts(value)
-    for traffic_count, traffic_list in traffics_dict.items():
-        for traffic in traffic_list:
-            dst_ip_dict.update({traffic[1]: traffic_count})
-    print("[+] Extracted destination IP addresses from traffics.\n")
-
-    return dst_ip_dict
-
-
 def get_geolocation(traffics_dict: dict) -> dict:
     """Return geo_location_dict witch contains IP addresses and
     their packet counts, longitude, latitude, country and city names
     """
 
     geo_location_dict = {}  # stores geo_location data using IP addresses as a key
-    dst_ip_dict = get_dst_ip(traffics_dict)  # get dst_ip_dict from get_dst_ip function
     geo_info_list = []      # stores geo_info obtained from geoip2.database.Reader and packet counts
     print("[*] Extracting geolocation information from destination IP addresses.\n")
     try:
         g_reader = geoip2.database.Reader(GEOLOCATION_DB)
-        for dst_ip, pkt_count in dst_ip_dict.items():
-            try:
-                geo_info_list.append([g_reader.city(dst_ip), pkt_count])
-            except geoip2.errors.AddressNotFoundError:
-                geo_info_list.append(['', ''])  # append an empty list if the ip is not found
-            except TypeError as err:
-                sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
-                sys.exit()
+        # print(traffics_dict)
+        for traffic_count, traffics_list in traffics_dict.items():
+            for traffic in traffics_list:
+                try:
+                    geo_info_list.append([g_reader.city(traffic[1]), traffic_count])
+                except geoip2.errors.AddressNotFoundError:
+                    geo_info_list.append(['', ''])  # append an empty list if not found
+                except TypeError as err:
+                    sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
+                    sys.exit()
     except geoip2.errors.GeoIP2Error as err:
         sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
         sys.exit()
@@ -84,7 +71,6 @@ def get_geolocation(traffics_dict: dict) -> dict:
             # update the geo_location dict with ip address (key) and data (value)
             geo_location_dict.update({geo_info.traits.ip_address: data})
     print("[+] Successfully extracting geolocation information from destination IP addresses.\n")
-
     return geo_location_dict
 
 
@@ -114,4 +100,4 @@ def create_kml_file(traffics_dict: dict) -> None:
 
 
 if __name__ == "__main__":
-    create_kml_file(ap.extract_traffics(p_pcap.parse_inet_proto(p_pcap.parse_pcap(p_pcap.PCAP_FILE))))
+    create_kml_file(ap.extract_traffics(p_pcap.parse_inet_proto(p_pcap.parse_pcap())))
