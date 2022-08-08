@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     if arg.packet_type_table or arg.analyse_packets or arg.geolocation_kml or arg.graph_analysis:
         pcap_data = p_pcap.parse_pcap(arg.pcap_file)
-        eth_data = p_pcap.parse_ethernet(pcap_data)
+        eth_data = p_pcap.parse_inet_proto(pcap_data)
 
     if arg.packet_type_table:
         p_pcap.tabulate_data(pcap_data)

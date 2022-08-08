@@ -31,6 +31,7 @@ def extract_email_addresses(data: str) -> tuple:
 
     to_email = TO_EMAIL_REGEX.findall(data)
     from_email = FROM_EMAIL_REGEX.findall(data)
+    print(to_email)
 
     return (to_email, from_email)
 
@@ -53,7 +54,7 @@ def extract_files(data: str) -> tuple:
     return (full_url, filename)
 
 
-def extract_traffics(eth_list: list) -> dict:
+def extract_traffics(inet_proto_list: list) -> dict:
     """ Extract source and destination IP addresses and count traffics.
     Use number of traffics as keys and list the traffics with same traffic counts as values.
     Return them as a dictionary
@@ -61,9 +62,9 @@ def extract_traffics(eth_list: list) -> dict:
 
     traffics_dict: dict = {}
     print("[*] Extracting traffics data.\n")
-    for eth in eth_list:
-        src = socket.inet_ntoa(eth.data.src)
-        dst = socket.inet_ntoa(eth.data.dst)
+    for inet_proto in inet_proto_list:
+        src = socket.inet_ntoa(inet_proto.src)
+        dst = socket.inet_ntoa(inet_proto.dst)
         tmp_key = src + ' -> ' + dst
         if tmp_key in traffics_dict:
             traffics_dict[tmp_key] += 1
@@ -88,7 +89,7 @@ def extract_traffics(eth_list: list) -> dict:
     return traffics_dict
 
 
-def analyse_packets(eth_list: list) -> tuple:
+def analyse_packets(inet_proto_list: list) -> tuple:
     """ Make a unique list of extracted TO email addresses, FROM email addresses,
     full URLs for image requests, image filenames.
     Return them as a tuple
@@ -100,8 +101,8 @@ def analyse_packets(eth_list: list) -> tuple:
     filename_list = []
 
     print("[*] Extracting TO, FROM email addresses, full image URLs and image names.\n")
-    for eth in eth_list:
-        decoded_data = eth.data.data.data.decode('latin-1')
+    for inet_proto in inet_proto_list:
+        decoded_data = inet_proto.data.data.decode('latin-1')
         to_email, from_email = extract_email_addresses(decoded_data)
         full_url, filename = extract_files(decoded_data)
 
@@ -119,7 +120,7 @@ def analyse_packets(eth_list: list) -> tuple:
     return (set(to_email_list), set(from_email_list), full_url_list, filename_list)
 
 
-def display_analysed_data(eth_list: list) -> None:
+def display_analysed_data(inet_proto_list: list) -> None:
     """ Extract necessary data for analysis and display the analysis results in tables
     """
 
@@ -127,9 +128,9 @@ def display_analysed_data(eth_list: list) -> None:
     data_dict2 = {}
 
     (data_dict1['To Email Addresses'], data_dict1['From Email Addresses'], data_dict2['Full URLs'],
-    data_dict2['Image filenames']) = analyse_packets(eth_list)
+    data_dict2['Image filenames']) = analyse_packets(inet_proto_list)
 
-    traffics_dict = extract_traffics(eth_list)
+    traffics_dict = extract_traffics(inet_proto_list)
 
     print("[*] Tabulating TO and FROM email addresses.\n")
     print(tabulate(data_dict1, headers='keys', tablefmt='psql'), end="\n\n")
@@ -157,4 +158,4 @@ def display_analysed_data(eth_list: list) -> None:
 
 
 if __name__ == "__main__":
-    display_analysed_data(p_pcap.parse_ethernet(p_pcap.parse_pcap(p_pcap.PCAP_FILE)))
+    display_analysed_data(p_pcap.parse_inet_proto(p_pcap.parse_pcap(p_pcap.PCAP_FILE)))

@@ -3,7 +3,7 @@ Script: graph_analysis.py
 Description: Extract data from PCAP file and draw a line chart of
             number of packets between each time intervals
 Author: Thar Htet Nyan
-Date: Auguest 2022
+Date: August 2022
 """
 
 
@@ -21,13 +21,12 @@ def extract_data(pcap_data: tuple) -> dict:
         Return dictionary of time_intervals(key) and packet counts(value)
     """
 
-    ts_list, _ = pcap_data
-    start_time = ts_list[0]
+    start_time = pcap_data[0][0]
     data: dict = {}
     # time_interval = f"{start_time} -> {start_time+interval}"
     time_interval = start_time
     print("[*] Extracting data to create a line chart.\n")
-    for timestamp in ts_list:
+    for timestamp, _ in pcap_data:
         if timestamp > start_time + INTERVAL:
             start_time += INTERVAL
             # time_interval = f"{start_time} -> {start_time+interval}"
