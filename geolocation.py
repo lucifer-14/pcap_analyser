@@ -6,7 +6,6 @@ Author: Thar Htet Nyan
 Date: July 2022
 """
 
-import re
 import os
 import sys
 import simplekml
@@ -24,11 +23,10 @@ def get_dst_ip(traffics_dict: dict) -> dict:
     and their packets counts from IP address dictionary"""
 
     print("[*] Extracting destination IP addresses from traffics.\n")
-    dst_regex = re.compile(r'-> ([\d.]*)$')     # uses Regex to extract dst ip from traffics_dict
     dst_ip_dict = {}    # stores a dict of dst_ip(key) and packet counts(value)
     for traffic_count, traffic_list in traffics_dict.items():
         for traffic in traffic_list:
-            dst_ip_dict.update({dst_regex.findall(traffic)[0]: traffic_count})
+            dst_ip_dict.update({traffic[1]: traffic_count})
     print("[+] Extracted destination IP addresses from traffics.\n")
 
     return dst_ip_dict

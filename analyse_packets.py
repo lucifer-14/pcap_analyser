@@ -31,7 +31,6 @@ def extract_email_addresses(data: str) -> tuple:
 
     to_email = TO_EMAIL_REGEX.findall(data)
     from_email = FROM_EMAIL_REGEX.findall(data)
-    print(to_email)
 
     return (to_email, from_email)
 
@@ -66,6 +65,7 @@ def extract_traffics(inet_proto_list: list) -> dict:
         src = socket.inet_ntoa(inet_proto.src)
         dst = socket.inet_ntoa(inet_proto.dst)
         tmp_key = src + ' -> ' + dst
+        tmp_key = (src, dst)
         if tmp_key in traffics_dict:
             traffics_dict[tmp_key] += 1
         else:
@@ -142,7 +142,7 @@ def display_analysed_data(inet_proto_list: list) -> None:
 
     print(f"[*] Writing traffic data to {TRAFFIC_FILE}.\n")
     with open(TRAFFIC_FILE, 'wb') as file:
-        tabulated_data = tabulate([[i, k] for k, v in traffics_dict.items() for i in v],
+        tabulated_data = tabulate([[f'{src} -> {dst}', traffic_count] for traffic_count, traffic in traffics_dict.items() for src, dst in traffic],
                                     headers=['Traffic',
                                             'Number of traffics'],
                                     tablefmt='psql')
