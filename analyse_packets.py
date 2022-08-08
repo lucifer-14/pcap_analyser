@@ -17,17 +17,20 @@ import parse_pcap as p_pcap
 
 TRAFFIC_FILE = 'ip_traffic_table.txt'
 
+TO_EMAIL_REGEX = re.compile(r'To:\s.*\s*<([\w._%-]+@[\w]+\.[\w]+?)>')
+FROM_EMAIL_REGEX = re.compile(r'From:\s.*\s*<([\w._%-]+@[\w]+\.[\w]+?)>')
+
+URL_REGEX = re.compile(r'GET\s([\w/_%+-]+\.(jpg|png|gif|jpeg))\s', re.I)
+HOST_REGEX = re.compile(r'Host:\s([\w]+\.[\w_+-]+\.[\w]+\.*[\w]*)')
+
 
 def extract_email_addresses(data: str) -> tuple:
     """ Extract TO email address and FROM email address from string using Regex.
     Return them as a tuple
     """
 
-    to_email_regex = re.compile(r'To:\s.*\s*<([\w._%-]+@[\w]+\.[\w]+?)>')
-    from_email_regex = re.compile(r'From:\s.*\s*<([\w._%-]+@[\w]+\.[\w]+?)>')
-
-    to_email = to_email_regex.findall(data)
-    from_email = from_email_regex.findall(data)
+    to_email = TO_EMAIL_REGEX.findall(data)
+    from_email = FROM_EMAIL_REGEX.findall(data)
 
     return (to_email, from_email)
 
@@ -39,11 +42,9 @@ def extract_files(data: str) -> tuple:
 
     full_url = ""
     filename = ""
-    url_regex = re.compile(r'GET\s([\w/_%+-]+\.(jpg|png|gif|jpeg))\s', re.I)
-    host_regex = re.compile(r'Host:\s([\w]+\.[\w_+-]+\.[\w]+\.*[\w]*)')
 
-    host = host_regex.findall(data)
-    url = url_regex.findall(data)
+    host = HOST_REGEX.findall(data)
+    url = URL_REGEX.findall(data)
 
     if host and url:
         full_url = "http://"+host[0] + url[0][0]

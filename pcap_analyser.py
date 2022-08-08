@@ -1,6 +1,6 @@
 """
-Script: pcap_analyzer.py
-Description: Analyzes the PCAP file. Show Packet Types information, TO and FROM email
+Script: pcap_analyser.py
+Description: Analyses the PCAP file. Show Packet Types information, TO and FROM email
             addresse, Traffic Information. Create KML file to locate destination IP addresses.
             Draw a line chart to display number of packets within each time interval
 Author: Thar Htet Nyan
@@ -17,7 +17,7 @@ import graph_analysis as ga
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--pcap_file', type=str,
+    parser.add_argument('-p', '--pcap-file', type=str,
                         help="pcap file name to read",
                         default=p_pcap.PCAP_FILE)
     parser.add_argument('-ptt', '--packet_type_table',
@@ -26,10 +26,10 @@ if __name__ == "__main__":
     parser.add_argument('-ap', '--analyse_packets',
                         help="analyse the packets and show information",
                         action='store_true')
-    parser.add_argument('-t', '--traffic_file', type=str,
+    parser.add_argument('-t', '--traffic-file', type=str,
                         help="output filename to store traffics",
                         default=ap.TRAFFIC_FILE)
-    parser.add_argument('-g', '--geo_db', type=str,
+    parser.add_argument('-g', '--geo-db', type=str,
                         help="geolite database name",
                         default=gl.GEOLOCATION_DB)
     parser.add_argument('-gk', '--geolocation_kml',
