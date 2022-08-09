@@ -16,31 +16,30 @@ import parse_pcap as p_pcap
 
 INTERVAL = 5
 
-def extract_data(pcap_data: tuple) -> dict:
+
+def extract_data(pcap_data: list) -> dict:
     """ Extract time intervals and packet counts between each time interval.
         Return dictionary of time_intervals(key) and packet counts(value)
     """
 
     start_time = pcap_data[0][0]
     data: dict = {}
-    # time_interval = f"{start_time} -> {start_time+interval}"
-    time_interval = start_time
+
     print("[*] Extracting data to create a line chart.\n")
     for timestamp, _ in pcap_data:
         if timestamp > start_time + INTERVAL:
             start_time += INTERVAL
-            # time_interval = f"{start_time} -> {start_time+interval}"
-            time_interval = start_time + INTERVAL
-        if time_interval in data:
-            data[time_interval] += 1
+
+        if start_time in data:
+            data[start_time] += 1
         else:
-            data.setdefault(time_interval, 1)
+            data.setdefault(start_time, 1)
     print("[+] Successfully extracted data to create a line chart.\n")
 
     return data
 
 
-def draw_graph(pcap_data: tuple) -> None:
+def draw_graph(pcap_data: list) -> None:
     """ Draw a line chart from extracted data
     """
 

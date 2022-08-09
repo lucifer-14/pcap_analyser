@@ -64,7 +64,6 @@ def extract_traffics(inet_proto_list: list) -> dict:
     for inet_proto in inet_proto_list:
         src = socket.inet_ntoa(inet_proto.src)
         dst = socket.inet_ntoa(inet_proto.dst)
-        tmp_key = src + ' -> ' + dst
         tmp_key = (src, dst)
         if tmp_key in traffics_dict:
             traffics_dict[tmp_key] += 1
@@ -128,7 +127,7 @@ def display_analysed_data(inet_proto_list: list) -> None:
     data_dict2 = {}
 
     (data_dict1['To Email Addresses'], data_dict1['From Email Addresses'], data_dict2['Full URLs'],
-    data_dict2['Image filenames']) = analyse_packets(inet_proto_list)
+    data_dict2['Image Filenames']) = analyse_packets(inet_proto_list)
 
     traffics_dict = extract_traffics(inet_proto_list)
 
@@ -142,10 +141,14 @@ def display_analysed_data(inet_proto_list: list) -> None:
 
     print(f"[*] Writing traffic data to {TRAFFIC_FILE}.\n")
     with open(TRAFFIC_FILE, 'wb') as file:
-        tabulated_data = tabulate([[f'{src} -> {dst}', traffic_count] for traffic_count, traffic in traffics_dict.items() for src, dst in traffic],
-                                    headers=['Traffic',
-                                            'Number of traffics'],
-                                    tablefmt='psql')
+        traffic_table = [[f'{src} -> {dst}', traffic_count]
+                         for traffic_count, traffic in traffics_dict.items()
+                         for src, dst in traffic]
+
+        tabulated_data = tabulate(traffic_table,
+                                  headers=['Traffic',
+                                           'Number of traffics'],
+                                  tablefmt='psql')
         file.write(tabulated_data.encode('utf-8'))
 
     print(f"[+] Successfully written traffic data to {TRAFFIC_FILE}.\n")
@@ -158,4 +161,4 @@ def display_analysed_data(inet_proto_list: list) -> None:
 
 
 if __name__ == "__main__":
-    display_analysed_data(p_pcap.parse_inet_proto(p_pcap.parse_pcap(p_pcap.PCAP_FILE)))
+    display_analysed_data(p_pcap.parse_inet_proto(p_pcap.parse_pcap()))

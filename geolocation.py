@@ -28,7 +28,6 @@ def get_geolocation(traffics_dict: dict) -> dict:
     print("[*] Extracting geolocation information from destination IP addresses.\n")
     try:
         g_reader = geoip2.database.Reader(GEOLOCATION_DB)
-        # print(traffics_dict)
         for traffic_count, traffics_list in traffics_dict.items():
             for traffic in traffics_list:
                 try:
@@ -43,9 +42,6 @@ def get_geolocation(traffics_dict: dict) -> dict:
         sys.exit()
     except FileNotFoundError:
         sys.stderr.write(f'\n[-] GeoLocation file: {GEOLOCATION_DB} - NOT Found!\n\n')
-        sys.exit()
-    except Exception as err:
-        sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
         sys.exit()
 
     # creates geo_location_dict with ip address as key

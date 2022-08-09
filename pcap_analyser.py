@@ -45,16 +45,16 @@ if __name__ == "__main__":
 
     if arg.packet_type_table or arg.analyse_packets or arg.geolocation_kml or arg.graph_analysis:
         pcap_data = p_pcap.parse_pcap(arg.pcap_file)
-        eth_data = p_pcap.parse_inet_proto(pcap_data)
+        inet_data = p_pcap.parse_inet_proto(pcap_data)
 
     if arg.packet_type_table:
         p_pcap.tabulate_data(pcap_data)
 
     if arg.analyse_packets:
-        ap.display_analysed_data(eth_data)
+        ap.display_analysed_data(inet_data)
 
     if arg.geolocation_kml:
-        gl.create_kml_file(ap.extract_traffics(eth_data))
+        gl.create_kml_file(ap.extract_traffics(inet_data))
 
     if arg.graph_analysis:
         ga.draw_graph(pcap_data)

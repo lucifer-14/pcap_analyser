@@ -58,12 +58,13 @@ def parse_inet_proto(pcap_data: list) -> list:
     """ Read the PCAP file and return internet protocol data in the form of a list """
 
     inet_proto_list = []
-    for _, buf in pcap_data:
+    for _, buffer in pcap_data:
         try:
-            inet_proto_list.append(dpkt.ethernet.Ethernet(buf).data)
+            inet_proto_list.append(dpkt.ethernet.Ethernet(buffer).data)
         except dpkt.Error as err:
-            err = err.__class__.__name__
-            sys.stderr.write('\n[-] An error occured while parsing data to Internet protocol. {err}\n\n')
+            msg = 'An error occured while parsing data to Internet protocol.'
+            err = f'{msg} {err.__class__.__name__}'
+            sys.stderr.write('\n[-] {err}\n\n')
             sys.exit()
         except Exception as err:
             sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
@@ -79,20 +80,20 @@ def tabulate_data(pcap_data: list) -> None:
 
     packet_type_dict: dict = {}
     print("[*] Tabulating the data from PCAP file.\n")
-    for ts, buf in pcap_data:
+    for timestamp, buffer in pcap_data:
         try:
-            ip = dpkt.ethernet.Ethernet(buf).data
+            inet_proto = dpkt.ethernet.Ethernet(buffer).data
             tmp = {'packets': 0,
                    'total_packet_length': 0,
                    'first_timestamp': '',
                    'last_timestamp': '',
                    'is_first': False}
-            protocol_type = dpkt.ip.get_ip_proto_name(ip.p)
+            protocol_type = dpkt.ip.get_ip_proto_name(inet_proto.p)
             packet_type_dict.setdefault(protocol_type, tmp)
             packet_type_dict[protocol_type]['packets'] += 1
-            packet_type_dict[protocol_type]['total_packet_length'] += len(buf)
+            packet_type_dict[protocol_type]['total_packet_length'] += len(buffer)
 
-            utc_time = datetime.datetime.utcfromtimestamp(ts)
+            utc_time = datetime.datetime.utcfromtimestamp(timestamp)
             if not packet_type_dict[protocol_type]['is_first']:
                 packet_type_dict[protocol_type]['first_timestamp'] = utc_time
                 packet_type_dict[protocol_type]['is_first'] = True
