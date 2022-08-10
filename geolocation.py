@@ -19,7 +19,7 @@ GEOLOCATION_DB = 'GeoLite2-City_20190129.mmdb'
 
 
 def get_geolocation(traffics_dict: dict) -> dict:
-    """Return geo_location_dict witch contains IP addresses and
+    """Return geo_location_dict which contains IP addresses and
     their packet counts, longitude, latitude, country and city names
     """
 
@@ -46,7 +46,15 @@ def get_geolocation(traffics_dict: dict) -> dict:
 
     # creates geo_location_dict with ip address as key
     for geo_info, pkt_count in geo_info_list:
-        if geo_info:
+        # checks if there is information
+        if geo_info: 
+            # checking whether the information of ip address is already extracted or not
+            # if already extracted, just add the packet count
+            if geo_info.traits.ip_address in geo_location_dict:
+                # 
+                geo_location_dict[geo_info.traits.ip_address]['packet_count'] += pkt_count
+                continue
+
             # prepare data dict to store packet count(key), longitude(key), latitude(key),
             # country(key) (if exists), city(key) (if exists)
             data = {
@@ -66,6 +74,7 @@ def get_geolocation(traffics_dict: dict) -> dict:
 
             # update the geo_location dict with ip address (key) and data (value)
             geo_location_dict.update({geo_info.traits.ip_address: data})
+
     print("[+] Successfully extracting geolocation information from destination IP addresses.\n")
     return geo_location_dict
 
@@ -90,7 +99,7 @@ def create_kml_file(traffics_dict: dict) -> None:
                     description=description)
 
     filename, _ = os.path.splitext(p_pcap.PCAP_FILE)
-    res_filename = filename + "_result.kml"
+    res_filename = filename + "_result111.kml"
     kml.save(res_filename)
     print(f"[+] Successfully created a KML file - {res_filename} with geolocation information.\n")
 

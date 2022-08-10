@@ -18,10 +18,11 @@ PCAP_FILE = "evidence-packet-analysis.pcap"
 # PCAP_FILE = "../Week 3/week7files/filtered2.pcap"
 # PCAP_FILE = "../Week 3/week7files/filtered3.pcap"
 # PCAP_FILE = "../pcap_file.pcap"
+PACKET_TABLE_FILE = 'packet_table.txt'
 
 
 def parse_pcap(file: str = PCAP_FILE) -> list:
-    """ Read the PCAP file and return timestamps and pcap data """
+    """ Read the PCAP file and return timestamps and pcap data as a list """
 
     pcap_data = [] # store buffer and timestamp
     try:
@@ -62,7 +63,7 @@ def parse_inet_proto(pcap_data: list) -> list:
         try:
             inet_proto_list.append(dpkt.ethernet.Ethernet(buffer).data)
         except dpkt.Error as err:
-            msg = 'An error occured while parsing data to Internet protocol.'
+            msg = 'An error occured while parsing data to Internet Protocol.'
             err = f'{msg} {err.__class__.__name__}'
             sys.stderr.write('\n[-] {err}\n\n')
             sys.exit()
@@ -75,11 +76,11 @@ def parse_inet_proto(pcap_data: list) -> list:
 
 
 def tabulate_data(pcap_data: list) -> None:
-    """ Extract necessary data and tabulate the network data
+    """ Extract necessary data and tabulate the packet data
     """
 
     packet_type_dict: dict = {}
-    print("[*] Tabulating the data from PCAP file.\n")
+    print("[*] Tabulating the packet data from PCAP file.\n")
     for timestamp, buffer in pcap_data:
         try:
             inet_proto = dpkt.ethernet.Ethernet(buffer).data
@@ -120,14 +121,22 @@ def tabulate_data(pcap_data: list) -> None:
                     info['last_timestamp'],
                     info['total_packet_length']/info['packets']])
 
-    print(tabulate(tmp_list,
-                   headers=['Packet Types',
-                            'Number of Packets',
-                            'First Timestamp (UTC)',
-                            'Last Timestamp (UTC)',
-                            'Mean Packet Length'],
-                   tablefmt='pretty'))
-    print("\n[+] Successfully tabulated the data in PCAP File.\n")
+    packet_table_tabulated_data = tabulate(tmp_list,
+                                           headers=['Packet Types',
+                                                    'Number of Packets',
+                                                    'First Timestamp (UTC)',
+                                                    'Last Timestamp (UTC)',
+                                                    'Mean Packet Length'],
+                                           tablefmt='pretty')
+    print(packet_table_tabulated_data)
+    print("\n[+] Successfully tabulated the packet data.\n")
+
+    print(f"[*] Writing packet table data to - {PACKET_TABLE_FILE}.\n")
+    with open(PACKET_TABLE_FILE, 'wb') as file:
+        
+        file.write(packet_table_tabulated_data.encode('utf-8'))
+
+    print(f"[+] Successfully written packet table data to - {PACKET_TABLE_FILE}.\n")
 
 
 if __name__ == "__main__":
