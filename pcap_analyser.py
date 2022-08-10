@@ -58,11 +58,13 @@ if __name__ == "__main__":
     ap.TRAFFIC_FILE = arg.traffic_file
     gl.GEOLOCATION_DB = arg.geo_db
 
-    if arg.packet_type_table or arg.analyse_packets or arg.geolocation_kml or arg.graph_analysis or arg.all:
+    if arg.packet_type_table or arg.analyse_packets or arg.geolocation_kml or arg.graph_analysis:
         pcap_data = p_pcap.parse_pcap(arg.pcap_file)
         inet_data = p_pcap.parse_inet_proto(pcap_data)
 
     if arg.all:
+        pcap_data = p_pcap.parse_pcap(arg.pcap_file)
+        inet_data = p_pcap.parse_inet_proto(pcap_data)
         p_pcap.tabulate_data(pcap_data)
         ap.display_analysed_data(inet_data)
         gl.create_kml_file(ap.extract_traffics(inet_data))
