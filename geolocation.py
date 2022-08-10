@@ -23,7 +23,7 @@ def get_geolocation(traffics_dict: dict) -> dict:
     their packet counts, longitude, latitude, country and city names
     """
 
-    geo_location_dict = {}  # stores geo_location data using IP addresses as a key
+    geo_location_dict: dict = {}  # stores geo_location data using IP addresses as a key
     geo_info_list = []      # stores geo_info obtained from geoip2.database.Reader and packet counts
     print("[*] Extracting geolocation information from destination IP addresses.\n")
     try:
