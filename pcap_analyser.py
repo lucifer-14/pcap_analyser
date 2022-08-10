@@ -17,7 +17,7 @@ import graph_analysis as ga
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-A', '--all', type=str,
+    parser.add_argument('-A', '--all',
                         help="perform all fuctions of pcap analyser",
                         action='store_true')
     parser.add_argument('-p', '--pcap_file', type=str,
