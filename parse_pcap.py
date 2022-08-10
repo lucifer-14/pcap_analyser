@@ -133,7 +133,6 @@ def tabulate_data(pcap_data: list) -> None:
 
     print(f"[*] Writing packet table data to - {PACKET_TABLE_FILE}.\n")
     with open(PACKET_TABLE_FILE, 'wb') as file:
-        
         file.write(packet_table_tabulated_data.encode('utf-8'))
 
     print(f"[+] Successfully written packet table data to - {PACKET_TABLE_FILE}.\n")
