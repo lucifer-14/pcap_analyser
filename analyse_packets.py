@@ -19,7 +19,6 @@ IMAGE_REQUEST_FILE = 'image_request_table.txt'
 TRAFFIC_FILE = 'ip_traffic_table.txt'
 
 
-
 TO_EMAIL_REGEX = re.compile(r'To:\s.*\s*<([\w._%-]+@[\w]+\.[\w]+?)>')
 FROM_EMAIL_REGEX = re.compile(r'From:\s.*\s*<([\w._%-]+@[\w]+\.[\w]+?)>')
 
