@@ -47,11 +47,10 @@ def get_geolocation(traffics_dict: dict) -> dict:
     # creates geo_location_dict with ip address as key
     for geo_info, pkt_count in geo_info_list:
         # checks if there is information
-        if geo_info: 
+        if geo_info:
             # checking whether the information of ip address is already extracted or not
             # if already extracted, just add the packet count
             if geo_info.traits.ip_address in geo_location_dict:
-                # 
                 geo_location_dict[geo_info.traits.ip_address]['packet_count'] += pkt_count
                 continue
 
@@ -99,7 +98,7 @@ def create_kml_file(traffics_dict: dict) -> None:
                     description=description)
 
     filename, _ = os.path.splitext(p_pcap.PCAP_FILE)
-    res_filename = filename + "_result111.kml"
+    res_filename = filename + "_result.kml"
     kml.save(res_filename)
     print(f"[+] Successfully created a KML file - {res_filename} with geolocation information.\n")
 

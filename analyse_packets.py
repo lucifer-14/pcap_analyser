@@ -14,7 +14,7 @@ from typing import OrderedDict
 from tabulate import tabulate
 import parse_pcap as p_pcap
 
-EMAIL_FILE = 'email_output_table.txt'
+EMAIL_OUTPUT_FILE = 'email_output_table.txt'
 IMAGE_REQUEST_FILE = 'image_request_table.txt'
 TRAFFIC_FILE = 'ip_traffic_table.txt'
 
@@ -139,12 +139,11 @@ def display_analysed_data(inet_proto_list: list) -> None:
     print(email_tabulated_data, end="\n\n")
     print("[+] Successfully tabulated TO and FROM email addresses.\n")
 
-    print(f"[*] Writing email outputs to - {EMAIL_FILE}.\n")
-    with open(EMAIL_FILE, 'wb') as file:
-        
+    print(f"[*] Writing email outputs to - {EMAIL_OUTPUT_FILE}.\n")
+    with open(EMAIL_OUTPUT_FILE, 'wb') as file:
         file.write(email_tabulated_data.encode('utf-8'))
 
-    print(f"[+] Successfully written email ouputs to - {EMAIL_FILE}.\n")
+    print(f"[+] Successfully written email ouputs to - {EMAIL_OUTPUT_FILE}.\n")
 
     print("[*] Tabulating Full URLs and Image filenames.\n")
     image_req_tabulated_data = tabulate(data_dict2, headers='keys', tablefmt='grid')
@@ -153,7 +152,6 @@ def display_analysed_data(inet_proto_list: list) -> None:
 
     print(f"[*] Writing image requests to - {IMAGE_REQUEST_FILE}.\n")
     with open(IMAGE_REQUEST_FILE, 'wb') as file:
-        
         file.write(image_req_tabulated_data.encode('utf-8'))
 
     print(f"[+] Successfully written image requests to - {IMAGE_REQUEST_FILE}.\n")
@@ -172,7 +170,6 @@ def display_analysed_data(inet_proto_list: list) -> None:
 
     print(f"[*] Writing traffic data to - {TRAFFIC_FILE}.\n")
     with open(TRAFFIC_FILE, 'wb') as file:
-        
         file.write(traffic_tabulated_data.encode('utf-8'))
 
     print(f"[+] Successfully written traffic data to - {TRAFFIC_FILE}.\n")
