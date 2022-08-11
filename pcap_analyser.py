@@ -1,7 +1,7 @@
 """
 Script: pcap_analyser.py
 Description: Analyses the PCAP file. Show Packet Types information, TO and FROM email
-            addresse, Traffic Information. Create KML file to locate destination IP addresses.
+            addresses, Traffic Information. Create KML file to locate destination IP addresses.
             Draw a line chart to display number of packets within each time interval
 Author: Thar Htet Nyan
 Date: August 2022
@@ -55,6 +55,7 @@ if __name__ == "__main__":
                         action='store_true')
     arg = parser.parse_args()
 
+    p_pcap.OUTPUT_FILE = arg.output_file
     p_pcap.PACKET_TABLE_FILE = arg.packet_table_file
     ap.EMAIL_OUTPUT_FILE = arg.email_output_file
     ap.IMAGE_REQUEST_FILE = arg.image_request_file
