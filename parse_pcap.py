@@ -15,7 +15,7 @@ from tabulate import tabulate
 import tlogger as tlog
 
 
-PCAP_FILE = "../evidence-packet-analysis.pcap"
+PCAP_FILE = "evidence-packet-analysis.pcap"
 # PCAP_FILE = "../Week 3/week7code/filtered4.pcap"
 # PCAP_FILE = "../Week 3/week7files/filtered2.pcap"
 # PCAP_FILE = "../Week 3/week7files/filtered3.pcap"
