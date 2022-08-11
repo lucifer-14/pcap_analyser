@@ -10,9 +10,12 @@ Date: July 2022
 import re
 import os
 import socket
+from io import TextIOWrapper
 from typing import OrderedDict
 from tabulate import tabulate
 import parse_pcap as p_pcap
+import tlogger as tlog
+
 
 EMAIL_OUTPUT_FILE = 'email_output_table.txt'
 IMAGE_REQUEST_FILE = 'image_request_table.txt'
@@ -55,14 +58,15 @@ def extract_files(data: str) -> tuple:
     return (full_url, filename)
 
 
-def extract_traffics(inet_proto_list: list) -> dict:
+def extract_traffics(inet_proto_list: list, out_file: TextIOWrapper = p_pcap.OUT_FILE) -> dict:
     """ Extract source and destination IP addresses and count traffics.
     Use number of traffics as keys and list the traffics with same traffic counts as values.
     Return them as a dictionary
     """
 
     traffics_dict: dict = {}
-    print("[*] Extracting traffics data.\n")
+    log = "[*] Extracting traffics data.\n"
+    tlog.logger(log, out_file)
     for inet_proto in inet_proto_list:
         src = socket.inet_ntoa(inet_proto.src)
         dst = socket.inet_ntoa(inet_proto.dst)
@@ -85,12 +89,13 @@ def extract_traffics(inet_proto_list: list) -> dict:
     #                       key=lambda t: t[1],
     #                       reverse=True)
 
-    print("[+] Successfully extracted traffics data.\n")
+    log = "[+] Successfully extracted traffics data.\n"
+    tlog.logger(log, out_file)
 
     return traffics_dict
 
 
-def analyse_packets(inet_proto_list: list) -> tuple:
+def analyse_packets(inet_proto_list: list, out_file: TextIOWrapper = p_pcap.OUT_FILE) -> tuple:
     """ Make a unique list of extracted TO email addresses, FROM email addresses,
     full URLs for image requests, image filenames.
     Return them as a tuple
@@ -101,7 +106,8 @@ def analyse_packets(inet_proto_list: list) -> tuple:
     full_url_list = []
     filename_list = []
 
-    print("[*] Extracting TO, FROM email addresses, full image URLs and image names.\n")
+    log = "[*] Extracting TO, FROM email addresses, full image URLs and image names.\n"
+    tlog.logger(log, out_file)
     for inet_proto in inet_proto_list:
         decoded_data = inet_proto.data.data.decode('latin-1')
         to_email, from_email = extract_email_addresses(decoded_data)
@@ -116,12 +122,13 @@ def analyse_packets(inet_proto_list: list) -> tuple:
         if filename:
             filename_list.append(filename)
 
-    print("[+] Successfully extracted TO, FROM email addresses, full image URLs and image names.\n")
+    log = "[+] Successfully extracted TO, FROM email addresses, full image URLs and image names.\n"
+    tlog.logger(log, out_file)
 
     return (set(to_email_list), set(from_email_list), full_url_list, filename_list)
 
 
-def display_analysed_data(inet_proto_list: list) -> None:
+def display_analysed_data(inet_proto_list: list, out_file: TextIOWrapper = p_pcap.OUT_FILE) -> None:
     """ Extract necessary data for analysis and display the analysis results in tables
     """
 
@@ -133,29 +140,38 @@ def display_analysed_data(inet_proto_list: list) -> None:
 
     traffics_dict = extract_traffics(inet_proto_list)
 
-    print("[*] Tabulating TO and FROM email addresses.\n")
+    log = "[*] Tabulating TO and FROM email addresses.\n"
+    tlog.logger(log, out_file)
     email_tabulated_data = tabulate(data_dict1, headers='keys', tablefmt='psql')
-    print(email_tabulated_data, end="\n\n")
-    print("[+] Successfully tabulated TO and FROM email addresses.\n")
+    tlog.logger(email_tabulated_data+"\n\n", out_file)
+    log = "[+] Successfully tabulated TO and FROM email addresses.\n"
+    tlog.logger(log, out_file)
 
-    print(f"[*] Writing email outputs to - {EMAIL_OUTPUT_FILE}.\n")
+    log = f"[*] Writing email outputs to - {EMAIL_OUTPUT_FILE}.\n"
+    tlog.logger(log, out_file)
     with open(EMAIL_OUTPUT_FILE, 'wb') as file:
         file.write(email_tabulated_data.encode('utf-8'))
 
-    print(f"[+] Successfully written email ouputs to - {EMAIL_OUTPUT_FILE}.\n")
+    log = f"[+] Successfully written email ouputs to - {EMAIL_OUTPUT_FILE}.\n"
+    tlog.logger(log, out_file)
 
-    print("[*] Tabulating Full URLs and Image filenames.\n")
+    log = "[*] Tabulating Full URLs and Image filenames.\n"
+    tlog.logger(log, out_file)
     image_req_tabulated_data = tabulate(data_dict2, headers='keys', tablefmt='grid')
-    print(image_req_tabulated_data, end="\n\n")
-    print("[+] Successfully tabulated Full URLs and Image filenames.\n")
+    tlog.logger(image_req_tabulated_data+"\n\n", out_file)
+    log = "[+] Successfully tabulated Full URLs and Image filenames.\n"
+    tlog.logger(log, out_file)
 
-    print(f"[*] Writing image requests to - {IMAGE_REQUEST_FILE}.\n")
+    log = f"[*] Writing image requests to - {IMAGE_REQUEST_FILE}.\n"
+    tlog.logger(log, out_file)
     with open(IMAGE_REQUEST_FILE, 'wb') as file:
         file.write(image_req_tabulated_data.encode('utf-8'))
 
-    print(f"[+] Successfully written image requests to - {IMAGE_REQUEST_FILE}.\n")
+    log = f"[+] Successfully written image requests to - {IMAGE_REQUEST_FILE}.\n"
+    tlog.logger(log, out_file)
 
-    print("[*] Tabulating Traffics and Number of Traffics.\n")
+    log = "[*] Tabulating Traffics and Number of Traffics.\n"
+    tlog.logger(log, out_file)
     traffic_table = [[f'{src} -> {dst}', traffic_count]
                        for traffic_count, traffic in traffics_dict.items()
                        for src, dst in traffic]
@@ -164,14 +180,17 @@ def display_analysed_data(inet_proto_list: list) -> None:
                                       headers=['Traffic',
                                                'Number of Traffics'],
                                       tablefmt='psql')
-    print(traffic_tabulated_data, end="\n\n")
-    print("[+] Successfully tabulated Traffics and Number of traffics.\n")
+    tlog.logger(traffic_tabulated_data+"\n\n", out_file)
+    log = "[+] Successfully tabulated Traffics and Number of traffics.\n"
+    tlog.logger(log, out_file)
 
-    print(f"[*] Writing traffic data to - {TRAFFIC_FILE}.\n")
+    log = f"[*] Writing traffic data to - {TRAFFIC_FILE}.\n"
+    tlog.logger(log, out_file)
     with open(TRAFFIC_FILE, 'wb') as file:
         file.write(traffic_tabulated_data.encode('utf-8'))
 
-    print(f"[+] Successfully written traffic data to - {TRAFFIC_FILE}.\n")
+    log = f"[+] Successfully written traffic data to - {TRAFFIC_FILE}.\n"
+    tlog.logger(log, out_file)
 
     # with open('ip_traffic_table1.txt', 'w') as f:
     #     f.write(tabulate([[k, v] for k, v in traffics],
@@ -182,3 +201,4 @@ def display_analysed_data(inet_proto_list: list) -> None:
 
 if __name__ == "__main__":
     display_analysed_data(p_pcap.parse_inet_proto(p_pcap.parse_pcap()))
+    p_pcap.OUT_FILE.close()

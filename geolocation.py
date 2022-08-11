@@ -8,24 +8,27 @@ Date: July 2022
 
 import os
 import sys
+from io import TextIOWrapper
 import simplekml
 import geoip2.database
 import geoip2.errors
 import parse_pcap as p_pcap
 import analyse_packets as ap
+import tlogger as tlog
 
 
 GEOLOCATION_DB = 'GeoLite2-City_20190129.mmdb'
 
 
-def get_geolocation(traffics_dict: dict) -> dict:
+def get_geolocation(traffics_dict: dict, out_file: TextIOWrapper = p_pcap.OUT_FILE) -> dict:
     """Return geo_location_dict which contains IP addresses and
     their packet counts, longitude, latitude, country and city names
     """
 
     geo_location_dict: dict = {}  # stores geo_location data using IP addresses as a key
     geo_info_list = []      # stores geo_info obtained from geoip2.database.Reader and packet counts
-    print("[*] Extracting geolocation information from destination IP addresses.\n")
+    log = "[*] Extracting geolocation information from destination IP addresses.\n"
+    tlog.logger(log, out_file)
     try:
         g_reader = geoip2.database.Reader(GEOLOCATION_DB)
         for traffic_count, traffics_list in traffics_dict.items():
@@ -35,13 +38,18 @@ def get_geolocation(traffics_dict: dict) -> dict:
                 except geoip2.errors.AddressNotFoundError:
                     geo_info_list.append(['', ''])  # append an empty list if not found
                 except TypeError as err:
-                    sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
+                    log = f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n'
+                    tlog.logger(log, out_file, True)
                     sys.exit()
     except geoip2.errors.GeoIP2Error as err:
-        sys.stderr.write(f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n')
+        log = f'\n[-] {err.__class__}: {err.__class__.__name__}\n\n'
+        sys.stderr.write(log)
+        print(log, file=out_file, flush=True)
         sys.exit()
     except FileNotFoundError:
-        sys.stderr.write(f'\n[-] GeoLocation file: {GEOLOCATION_DB} - NOT Found!\n\n')
+        log = f'\n[-] GeoLocation file: {GEOLOCATION_DB} - NOT Found!\n\n'
+        sys.stderr.write(log)
+        print(log, file=out_file, flush=True)
         sys.exit()
 
     # creates geo_location_dict with ip address as key
@@ -59,12 +67,9 @@ def get_geolocation(traffics_dict: dict) -> dict:
             data = {
                 'packet_count': pkt_count,
                 'longitude': geo_info.location.longitude,
-                'latitude': geo_info.location.latitude
+                'latitude': geo_info.location.latitude,
+                'country': geo_info.country.names['en']
             }
-            if geo_info.country.names:
-                data.update({"country": geo_info.country.names['en']})
-            else:
-                data.update({"country": ''})
 
             if geo_info.city.names:
                 data.update({"city": geo_info.city.names['en']})
@@ -74,16 +79,18 @@ def get_geolocation(traffics_dict: dict) -> dict:
             # update the geo_location dict with ip address (key) and data (value)
             geo_location_dict.update({geo_info.traits.ip_address: data})
 
-    print("[+] Successfully extracting geolocation information from destination IP addresses.\n")
+    log = "[+] Successfully extracting geolocation information from destination IP addresses.\n"
+    tlog.logger(log, out_file)
     return geo_location_dict
 
 
-def create_kml_file(traffics_dict: dict) -> None:
+def create_kml_file(traffics_dict: dict, out_file: TextIOWrapper = p_pcap.OUT_FILE) -> None:
     """ Create KML file from IP address dictionary
     """
 
     geo_location_dict = get_geolocation(traffics_dict)
-    print("[*] Creating a KML file with geolocation information.\n")
+    log = "[*] Creating a KML file with geolocation information.\n"
+    tlog.logger(log, out_file)
     kml = simplekml.Kml()
     for ip_addr, geo_location in geo_location_dict.items():
         description = f"Country: {geo_location['country']}"
@@ -100,8 +107,12 @@ def create_kml_file(traffics_dict: dict) -> None:
     filename, _ = os.path.splitext(p_pcap.PCAP_FILE)
     res_filename = filename + "_result.kml"
     kml.save(res_filename)
-    print(f"[+] Successfully created a KML file - {res_filename} with geolocation information.\n")
+    log = kml.kml()
+    tlog.logger(log, out_file)
+    log = f"[+] Successfully created a KML file - {res_filename} with geolocation information.\n"
+    tlog.logger(log, out_file)
 
 
 if __name__ == "__main__":
     create_kml_file(ap.extract_traffics(p_pcap.parse_inet_proto(p_pcap.parse_pcap())))
+    p_pcap.OUT_FILE.close()

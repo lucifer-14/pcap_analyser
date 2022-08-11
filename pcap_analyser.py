@@ -20,25 +20,28 @@ if __name__ == "__main__":
     parser.add_argument('-A', '--all',
                         help="perform all fuctions of pcap analyser",
                         action='store_true')
+    parser.add_argument('-o', '--output_file', type=str,
+                        help="output file name",
+                        default=p_pcap.OUTPUT_FILE)
     parser.add_argument('-p', '--pcap_file', type=str,
                         help="pcap file name to read",
                         default=p_pcap.PCAP_FILE)
     parser.add_argument('-ptt', '--packet_type_table',
                         help="display packet type information",
                         action='store_true')
-    parser.add_argument('-ptf', '--packet_table_file', type=str,
+    parser.add_argument('-oP', '--packet_table_file', type=str,
                         help="output filename to store packet table",
                         default=p_pcap.PACKET_TABLE_FILE)
     parser.add_argument('-ap', '--analyse_packets',
                         help="analyse the packets and show information",
                         action='store_true')
-    parser.add_argument('-e', '--email_output_file', type=str,
+    parser.add_argument('-oE', '--email_output_file', type=str,
                         help="output filename to store email addresses",
                         default=ap.EMAIL_OUTPUT_FILE)
-    parser.add_argument('-i', '--image_request_file', type=str,
+    parser.add_argument('-oI', '--image_request_file', type=str,
                         help="output filename to store image requests",
                         default=ap.IMAGE_REQUEST_FILE)
-    parser.add_argument('-t', '--traffic_file', type=str,
+    parser.add_argument('-oT', '--traffic_file', type=str,
                         help="output filename to store traffics",
                         default=ap.TRAFFIC_FILE)
     parser.add_argument('-g', '--geo_db', type=str,
@@ -68,7 +71,7 @@ if __name__ == "__main__":
         p_pcap.tabulate_data(pcap_data)
         ap.display_analysed_data(inet_data)
         gl.create_kml_file(ap.extract_traffics(inet_data))
-        ga.draw_graph(pcap_data)
+        ga.draw_graph(ga.extract_data(pcap_data))
 
     if arg.packet_type_table:
         p_pcap.tabulate_data(pcap_data)
@@ -80,4 +83,6 @@ if __name__ == "__main__":
         gl.create_kml_file(ap.extract_traffics(inet_data))
 
     if arg.graph_analysis:
-        ga.draw_graph(pcap_data)
+        ga.draw_graph(ga.extract_data(pcap_data))
+
+    p_pcap.OUT_FILE.close()
