@@ -77,3 +77,4 @@ def draw_graph(extracted_data: dict, out_file: TextIOWrapper = p_pcap.OUT_FILE) 
 
 if __name__ == "__main__":
     draw_graph(extract_data(p_pcap.parse_pcap()))
+    p_pcap.OUT_FILE.close()

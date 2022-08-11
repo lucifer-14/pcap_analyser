@@ -18,3 +18,8 @@ def logger(log: str, out_file: TextIOWrapper, is_error: bool = False) -> None:
     else:
         print(log)
         print(log, file=out_file, flush=True)
+
+
+if __name__ == "__main__":
+    with open('sample_file.txt', 'wt', encoding='utf-8') as sample_file:
+        logger("Sample LOG", file=sample_file)
