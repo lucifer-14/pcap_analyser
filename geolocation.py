@@ -105,7 +105,7 @@ def create_kml_file(traffics_dict: dict, out_file: TextIOWrapper = p_pcap.OUT_FI
                     description=description)
 
     filename, _ = os.path.splitext(p_pcap.PCAP_FILE)
-    res_filename = os.path.join(os.path.split(p_pcap.OUTPUT_FILE)[0], filename + "_result.kml")
+    res_filename = os.path.join(p_pcap.OUTPUT_FOLDER, filename + "_result.kml")
     kml.save(res_filename)
     log = kml.kml()
     tlog.logger(log, out_file)

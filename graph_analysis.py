@@ -69,7 +69,7 @@ def draw_graph(extracted_data: dict, out_file: TextIOWrapper = p_pcap.OUT_FILE) 
 
         log = "[+] Successfully drawn a line chart.\n"
         tlog.logger(log, out_file)
-        plt.savefig(os.path.join(os.path.split(p_pcap.OUTPUT_FILE)[0], 'number_of_packets_line_chart'))
+        plt.savefig(os.path.join(p_pcap.OUTPUT_FOLDER, 'number_of_packets_line_chart'))
         plt.show()
     except Exception:
         log = "[-] An error occured when drawing a line chart.\n\n"

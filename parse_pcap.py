@@ -22,10 +22,13 @@ PCAP_FILE = "evidence-packet-analysis.pcap"
 # PCAP_FILE = "../Week 3/week7files/filtered3.pcap"
 # PCAP_FILE = "../pcap_file.pcap"
 
-OUTPUT_FILE = os.path.abspath(os.path.join("outputs_folder", "pcap_analyser_output_file.txt"))
-if not os.path.exists(OUTPUT_FILE):
-    os.makedirs(OUTPUT_FILE)
-PACKET_TABLE_FILE = os.path.join(os.path.split(OUTPUT_FILE)[0],'packet_table.txt')
+
+OUTPUT_FILE = os.path.join("outputs_folder", "pcap_analyser_output_file.txt")
+OUTPUT_FILE = os.path.abspath(OUTPUT_FILE)
+OUTPUT_FOLDER = os.path.split(OUTPUT_FILE)[0]
+if not os.path.exists(OUTPUT_FOLDER):
+    os.makedirs(OUTPUT_FOLDER)
+PACKET_TABLE_FILE = os.path.join(OUTPUT_FOLDER,'packet_table.txt')
 OUT_FILE = open(OUTPUT_FILE, "wt", encoding="utf-8")
 
 
