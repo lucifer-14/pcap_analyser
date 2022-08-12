@@ -17,9 +17,10 @@ import parse_pcap as p_pcap
 import tlogger as tlog
 
 
-EMAIL_OUTPUT_FILE = 'email_output_table.txt'
-IMAGE_REQUEST_FILE = 'image_request_table.txt'
-TRAFFIC_FILE = 'ip_traffic_table.txt'
+
+EMAIL_OUTPUT_FILE = os.path.join(os.path.split(p_pcap.OUTPUT_FILE)[0], 'email_output_table.txt')
+IMAGE_REQUEST_FILE = os.path.join(os.path.split(p_pcap.OUTPUT_FILE)[0], 'image_request_table.txt')
+TRAFFIC_FILE = os.path.join(os.path.split(p_pcap.OUTPUT_FILE)[0], 'ip_traffic_table.txt')
 
 
 TO_EMAIL_REGEX = re.compile(r'To:\s.*\s*<([\w._%-]+@[\w]+\.[\w]+?)>')

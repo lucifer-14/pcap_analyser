@@ -7,6 +7,7 @@ Date: July 2022
 """
 
 
+import os
 import sys
 import datetime
 from io import TextIOWrapper
@@ -20,8 +21,11 @@ PCAP_FILE = "evidence-packet-analysis.pcap"
 # PCAP_FILE = "../Week 3/week7files/filtered2.pcap"
 # PCAP_FILE = "../Week 3/week7files/filtered3.pcap"
 # PCAP_FILE = "../pcap_file.pcap"
-PACKET_TABLE_FILE = 'packet_table.txt'
-OUTPUT_FILE = "pcap_analyser_output_file.txt"
+
+OUTPUT_FILE = os.path.abspath(os.path.join("outputs_folder", "pcap_analyser_output_file.txt"))
+if not os.path.exists(OUTPUT_FILE):
+    os.makedirs(OUTPUT_FILE)
+PACKET_TABLE_FILE = os.path.join(os.path.split(OUTPUT_FILE)[0],'packet_table.txt')
 OUT_FILE = open(OUTPUT_FILE, "wt", encoding="utf-8")
 
 
